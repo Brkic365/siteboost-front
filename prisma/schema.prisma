@@ -1,4 +1,6 @@
-// prisma/schema.prisma
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,29 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- COMBINED AND CORRECTED User MODEL ---
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  reports       Report[]
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  hashedPassword  String?   // This is the new field for password auth
+
+  // --- RELATIONS ---
+  accounts        Account[]
+  sessions        Session[]
+  reports         Report[]
 }
 
 model Report {
-  id                  String   @id @default(cuid())
-  url                 String
-  createdAt           DateTime @default(now())
-  performanceScore    Float
-  accessibilityScore  Float
-  bestPracticesScore  Float
-  seoScore            Float
-  rawData             Json
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId              String
+  id                 String    @id @default(cuid())
+  url                String
+  createdAt          DateTime  @default(now())
+
+  performanceScore   Float
+  accessibilityScore Float
+  bestPracticesScore Float
+  seoScore           Float
+
+  rawData            Json
+  aiData             Json
+
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String
 }
+
+
+// --- Default NextAuth.js models below ---
 
 model Account {
   id                 String  @id @default(cuid())
@@ -45,7 +58,8 @@ model Account {
   scope              String?
   id_token           String? @db.Text
   session_state      String?
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
 }
 
@@ -61,5 +75,6 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+
   @@unique([identifier, token])
 }

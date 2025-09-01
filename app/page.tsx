@@ -1,38 +1,45 @@
 // app/page.tsx
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Zap, BarChart3, BotMessageSquare, ShieldCheck } from 'lucide-react'; // Added BotMessageSquare
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Zap, BarChart3, BotMessageSquare } from "lucide-react";
+import { AuthForm } from "@/login/_components/auth-form";
 
 export default async function HomePage() {
   const session = await auth();
 
+  // If the user is already logged in, send them straight to the dashboard.
   if (session) {
-    redirect('/dashboard');
+    redirect("/dashboard");
   }
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-background text-foreground pt-32 pb-20 text-center">
-          <div className="container mx-auto px-4">
-            <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl">
-              The Complete Picture of Your {' '}
-              <span className="text-primary">Website's Health</span>
-            </h1>
-            <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-              Run comprehensive audits across Performance, SEO, Security, and Accessibility. Get a unified, AI-powered report to fix what matters most.
-            </p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Button asChild size="lg">
-                <Link href="/dashboard">Get Your Free AI Report</Link>
-              </Button>
+        <section className="bg-background text-foreground py-20 md:py-28">
+          <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center px-4">
+            
+            {/* Left Side: Marketing Copy */}
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
+                Turn Website Audits into {' '}
+                <span className="text-primary">Actionable Plans</span>
+              </h1>
+              <p className="mt-6 max-w-xl mx-auto md:mx-0 text-lg text-muted-foreground">
+                Stop drowning in technical jargon. SiteBoost uses AI to translate complex performance, SEO, and accessibility reports into a simple, prioritized to-do list for your team.
+              </p>
+              <div className="mt-8 flex justify-center md:justify-start gap-4">
+                 <a href="#signin" className="bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-10 rounded-md px-6 inline-flex items-center justify-center">Get Your Free Report</a>
+              </div>
+            </div>
+
+            {/* Right Side: Sign-in Card */}
+            <div id="signin">
+              <AuthForm />
             </div>
           </div>
         </section>
@@ -96,6 +103,6 @@ export default async function HomePage() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
